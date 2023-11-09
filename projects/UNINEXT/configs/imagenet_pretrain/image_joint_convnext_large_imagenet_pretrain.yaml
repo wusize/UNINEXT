@@ -1,0 +1,9 @@
+# Stage2: Image-level joint training (16 V100 GPUs 8 A100 GPUs)
+_BASE_: "image_joint_r50_imagenet_pretrain.yaml"
+MODEL:
+  WEIGHTS: "weights/convnext_large_22k_1k_384_new.pkl"
+  BACKBONE:
+    NAME: "D2ConvNeXt"
+  CONVNEXT:
+    NAME: "large"
+OUTPUT_DIR: "outputs/image_joint_convnext_large"
