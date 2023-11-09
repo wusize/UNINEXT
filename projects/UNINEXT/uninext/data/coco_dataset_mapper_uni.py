@@ -243,7 +243,7 @@ class DetrDatasetMapperUni:
             instances.positive_map = anno["positive_map"].bool() # (N, max_seq_len). N is num of objects. bool() -> 0 or 1
             expressions_new = anno["caption"] # "expressions" are shared between detection and grounding
         else:
-            raise ValueError("task must be detection or grounding")
+            raise ValueError(f"task must be detection or grounding. {task}, {self.lang_guide_det}")
         if hasattr(instances, "gt_masks"):
             instances.gt_boxes = instances.gt_masks.get_bounding_boxes()
         
