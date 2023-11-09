@@ -216,7 +216,8 @@ class DetrDatasetMapperUni:
         instances = utils.annotations_to_instances(annos, image_shape, mask_format="bitmask")
         
         # language-guided detection
-        task = dataset_dict["task"] if "task" in dataset_dict else None
+        # task = dataset_dict["task"] if "task" in dataset_dict else None
+        task = dataset_dict.get('task', 'detection')
         if self.lang_guide_det and task == "detection":
             ind_to_class = self.ind_to_class_dict[dataset_dict["dataset_name"]]
             original_box_num = len(instances)
