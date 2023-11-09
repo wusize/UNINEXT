@@ -10,6 +10,7 @@ from detectron2.data import transforms as T
 import re
 
 from detectron2.data.datasets.builtin_meta import COCO_CATEGORIES
+from detectron2.data.datasets.lvis_v1_categories import LVIS_CATEGORIES
 import random
 from transformers import AutoTokenizer
 from collections import defaultdict
@@ -137,6 +138,7 @@ class DetrDatasetMapperUni:
         if self.lang_guide_det:
             self.ind_to_class_dict = {}
             self.ind_to_class_dict["coco"] = cat2ind(COCO_CATEGORIES)
+            self.ind_to_class_dict['lvis'] = cat2ind(LVIS_CATEGORIES)
             self.ind_to_class_dict["obj365v2"] = cat2ind(OBJECTS365V2_CATEGORIES)
             use_roberta = cfg.MODEL.LANGUAGE_BACKBONE.TOKENIZER_TYPE == "roberta-base" and cfg.MODEL.LANGUAGE_BACKBONE.MODEL_TYPE == "roberta-base"
             if use_roberta:
@@ -163,6 +165,10 @@ class DetrDatasetMapperUni:
                         prompt_test, positive_map_label_to_token = create_queries_and_maps(OBJECTS365V2_CATEGORIES, self.tokenizer)
                         self.prompt_test_dict["obj365v2"] = prompt_test
                         self.positive_map_label_to_token_dict["obj365v2"] = positive_map_label_to_token
+                    elif dataset_name.startswith("lvis"):
+                        prompt_test, positive_map_label_to_token = create_queries_and_maps(LVIS_CATEGORIES, self.tokenizer)
+                        self.prompt_test_dict["lvis"] = prompt_test
+                        self.positive_map_label_to_token_dict["lvis"] = positive_map_label_to_token
                 if cfg.DATASETS.TEST[0].startswith("seginw"):
                     for dataset_name in cfg.DATASETS.TEST:
                         if dataset_name.startswith("seginw"):
@@ -219,7 +225,7 @@ class DetrDatasetMapperUni:
         # task = dataset_dict["task"] if "task" in dataset_dict else None
         task = dataset_dict.get('task', 'detection')
         if self.lang_guide_det and task == "detection":
-            ind_to_class = self.ind_to_class_dict[dataset_dict["dataset_name"]]
+            ind_to_class = self.ind_to_class_dict[dataset_dict.get("dataset_name", "lvis")]
             original_box_num = len(instances)
             instances, positive_caption_length = check_for_positive_overflow(instances, ind_to_class, self.tokenizer, self.max_query_len-2)
             if len(instances) < original_box_num:
