@@ -1,4 +1,4 @@
-# Stage2: Image-level joint training (16 v100 GPUs, 8 A100 gpus)
+# Stage2: Image-level joint training (8 A100 gpus)
 MODEL:
   USE_IOU_BRANCH: True
   LANG_GUIDE_DET: True
@@ -28,7 +28,7 @@ DATASETS:
   TRAIN: ("coco_2017_train", "lvis_v1_train")
   TEST: ("coco_2017_val", "lvis_v1_val")
 SOLVER:
-  IMS_PER_BATCH: 32 # batch-per-gpu = 2
+  IMS_PER_BATCH: 32 # batch-per-gpu = 4
   BASE_LR: 0.0002 # 2e-4
   VL_LR: 0.0002 # 2e-4
   STEPS: (76658,) # 2x (20/24)
@@ -57,8 +57,9 @@ DATALOADER:
   SAMPLER_TRAIN: "MultiDatasetSampler"
   DATASET_RATIO: [1, 1]
   USE_DIFF_BS_SIZE: True
-  DATASET_BS: [2, 2]
+  DATASET_BS: [4, 4]  # [2, 2]    we use 8 A100s
   # DATASET_INPUT_SIZE: [640, 320]
+  DATASET_ANN: ['box', 'box']   # box supervision
   USE_RFS: [False, True]    # use rfs for lvis
   FILTER_EMPTY_ANNOTATIONS: True
   NUM_WORKERS: 8
