@@ -314,7 +314,7 @@ class DetrDatasetMapperUni:
             if len(instances) == 0:
                 return None 
             dataset_dict["instances"] = instances
-        if dataset_dict["task"] == "phrase_grounding":
+        if dataset_dict.get("task", "detection") == "phrase_grounding":
             dataset_dict["task"] = "detection"
         return dataset_dict
 
